@@ -1,0 +1,118 @@
+<%- include('_header.ejs')%>
+      <!-- contact -->
+        <div class="contact">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12 ">
+                <div class="titlepage text_align_center">
+                  <h2>Register</h2>
+                </div>
+              </div>
+              <div class="col-md-8 offset-md-2">
+                <form id="requestform" action="user/register" method="post" class="main_form">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div style="display:none;" class="alert alert-danger" id="error"></div>
+                    </div>
+                    <div class="col-md-12">
+                      <input class="form_control" placeholder="Email" type="text" name="email"> 
+                    </div>
+                    <div class="col-md-12">
+                      <div style="display:none;" class="alert alert-danger" id="email"></div>
+                    </div>
+                    <div class="col-md-12">
+                      <input class="form_control" placeholder="First Name" type="text" name="firstname">                          
+                    </div>
+                    <div class="col-md-12">
+                      <div style="display:none;" class="alert alert-danger" id="firstname"></div>
+                    </div>
+                    <div class="col-md-12">
+                      <input class="form_control" placeholder="Last Name" type="text" name="lastname">
+                    </div>
+                    <div class="col-md-12">
+                      <div style="display:none;" class="alert alert-danger" id="lastname"></div>
+                    </div>
+                    <div class="col-md-12">
+                      <input class="form_control" placeholder="Password" type="password" name="password">
+                    </div>
+                    <div class="col-md-12">
+                      <div style="display:none;" class="alert alert-danger" id="password"></div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="group_form">
+                        <!-- <button class="send_btn">Register</button> -->
+                        <input type="submit" class="send_btn" value="Register">
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      <!-- end contact -->
+
+      <script>
+        const form = document.querySelector('form')
+        const emailError = document.querySelector('#email')
+        const passwordError = document.querySelector('#password')
+        const firstnameError = document.querySelector('#firstname')
+        const lastnameError = document.querySelector('#lastname')
+        form.addEventListener("submit", async (e) => {
+           e.preventDefault();
+           emailError.textContent = "";
+           passwordError.textContent = "";
+           firstnameError.textContent = "";
+           lastnameError.textContent = "";
+           emailError.style.display = "none"
+           passwordError.style.display = "none"
+           firstnameError.style.display = "none"
+           lastnameError.textContent = "none";
+           const email = form.email.value
+           const password = form.password.value
+           const firstname = form.firstname.value
+           const lastname = form.lastname.value
+           
+           try {
+              const res = await fetch('user/register', {
+                 method: "POST",
+                 body: JSON.stringify({ email, password, firstname,lastname }),
+                 headers: { "Content-Type": "application/json" }
+              })
+              const data = await res.json();
+              
+              if (!data.user) {
+                if (data.error.email) {
+                    emailError.textContent = data.error.email
+                    emailError.style.display = "block"
+                 }
+                 
+                 if ( data.error.firstname) {
+                    firstnameError.textContent = data.error.firstname
+                    firstnameError.style.display = "block"
+                 }
+                 if (data.error.lastname) {
+                  lastnameError.textContent=data.error.lastname
+                  lastnameError.style.display="block"                  
+                 }
+                 if (data.error.password) {
+                    passwordError.textContent = data.error.password
+                    passwordError.style.display = "block"
+                 }
+
+                 
+                 
+              }
+              if (data.user) {
+                 location.assign("/login")
+              }
+           } catch (err) {
+              console.log("ERROR register :", err);
+              
+           }
+        })
+     </script>
+
+      <%- include('_footer.ejs')%>
+
+     
